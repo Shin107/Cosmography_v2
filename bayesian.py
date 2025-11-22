@@ -274,32 +274,41 @@ for order in orders:
     print(f"{'#'*70}\n")
     
     order_results = {}
-    
+
+    # Increase num_warmup and num_samples with order
+    num_warmup = 1000 + 500 * (order - 3)
+    num_samples = 2000 + 1000 * (order - 3)
+
     # 1. Z-series
     order_results['z_series'] = run_mcmc_for_series(
-        numpyro_z_series, 'z_series', order, fixed_H0=fixed_H0_value
+        numpyro_z_series, 'z_series', order, fixed_H0=fixed_H0_value,
+        num_warmup=num_warmup, num_samples=num_samples
     )
     
     # 2. Y-series
     order_results['y_series'] = run_mcmc_for_series(
-        numpyro_y_series, 'y_series', order, fixed_H0=fixed_H0_value
+        numpyro_y_series, 'y_series', order, fixed_H0=fixed_H0_value,
+        num_warmup=num_warmup, num_samples=num_samples
     )
     
     # 3. Log-series
     order_results['log_series'] = run_mcmc_for_series(
-        numpyro_log_series, 'log_series', order, fixed_H0=fixed_H0_value
+        numpyro_log_series, 'log_series', order, fixed_H0=fixed_H0_value,
+        num_warmup=num_warmup, num_samples=num_samples
     )
     
     # 4. EIS-series
     order_results['eis_series'] = run_mcmc_for_series(
-        numpyro_eis_series, 'eis_series', order, fixed_H0=fixed_H0_value
+        numpyro_eis_series, 'eis_series', order, fixed_H0=fixed_H0_value,
+        num_warmup=num_warmup, num_samples=num_samples
     )
     
     # 5. Pade approximants
     pade_funcs = get_pade_functions(order)
     for pade_name, pade_func in pade_funcs:
         order_results[pade_name] = run_mcmc_for_pade(
-            pade_name, pade_func, order, fixed_H0=fixed_H0_value
+            pade_name, pade_func, order, fixed_H0=fixed_H0_value,
+            num_warmup=num_warmup , num_samples=num_samples  # Optionally use fewer warmup steps for Pade
         )
     
     all_results[f'order_{order}'] = order_results
